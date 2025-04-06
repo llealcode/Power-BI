@@ -1,0 +1,19 @@
+let
+    DataIni = #date(Date.Year(List.Min(NOME_DA_TABELA[COLUNA_DATA])), 1, 1),
+    DataFim = #date(Date.Year(List.Max(NOME_DA_TABELA[COLUNA_DATA])), 12, 31),
+    Dias = Duration.Days(DataFim - DataIni) + 1,
+
+    Fonte = List.Dates(DataIni, Dias, #duration(1, 0, 0, 0)),
+    ConvertidoparaTabela = Table.FromList(Fonte, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Tipo Alterado" = Table.TransformColumnTypes(ConvertidoparaTabela,{{"Column1", type date}}),
+    #"Ano Inserido" = Table.AddColumn(#"Tipo Alterado", "Ano", each Date.Year([Column1]), Int64.Type),
+    #"Mês Inserido" = Table.AddColumn(#"Ano Inserido", "Mês", each Date.Month([Column1]), Int64.Type),
+    #"Nome do Mês Inserido" = Table.AddColumn(#"Mês Inserido", "Nome do Mês", each Date.MonthName([Column1]), type text),
+    #"Dia Inserido" = Table.AddColumn(#"Nome do Mês Inserido", "Dia", each Date.Day([Column1]), Int64.Type),
+    #"Nome do Dia Inserido" = Table.AddColumn(#"Dia Inserido", "Nome do Dia", each Date.DayOfWeekName([Column1]), type text),
+    #"Colocar Cada Palavra Em Maiúscula" = Table.TransformColumns(#"Nome do Dia Inserido",{{"Nome do Mês", Text.Proper, type text}, {"Nome do Dia", Text.Proper, type text}}),
+    #"Primeiros Caracteres Inseridos" = Table.AddColumn(#"Colocar Cada Palavra Em Maiúscula", "Mês-Abrev", each Text.Start([Nome do Mês], 3), type text),
+    #"Primeiros Caracteres Inseridos1" = Table.AddColumn(#"Primeiros Caracteres Inseridos", "Dia-Abrev", each Text.Start([Nome do Dia], 3), type text),
+    #"Colunas Reordenadas" = Table.ReorderColumns(#"Primeiros Caracteres Inseridos1",{"Column1", "Ano", "Mês", "Nome do Mês", "Mês-Abrev", "Dia", "Nome do Dia", "Dia-Abrev"})
+in
+    #"Colunas Reordenadas"
