@@ -14,6 +14,7 @@ let
     #"Colocar Cada Palavra Em Maiúscula" = Table.TransformColumns(#"Nome do Dia Inserido",{{"Nome do Mês", Text.Proper, type text}, {"Nome do Dia", Text.Proper, type text}}),
     #"Primeiros Caracteres Inseridos" = Table.AddColumn(#"Colocar Cada Palavra Em Maiúscula", "Mês-Abrev", each Text.Start([Nome do Mês], 3), type text),
     #"Primeiros Caracteres Inseridos1" = Table.AddColumn(#"Primeiros Caracteres Inseridos", "Dia-Abrev", each Text.Start([Nome do Dia], 3), type text),
-    #"Colunas Reordenadas" = Table.ReorderColumns(#"Primeiros Caracteres Inseridos1",{"Column1", "Ano", "Mês", "Nome do Mês", "Mês-Abrev", "Dia", "Nome do Dia", "Dia-Abrev"})
+    #"Colunas Reordenadas" = Table.ReorderColumns(#"Primeiros Caracteres Inseridos1",{"Column1", "Ano", "Mês", "Nome do Mês", "Mês-Abrev", "Dia", "Nome do Dia", "Dia-Abrev"}),
+    #"Colunas Renomeadas" = Table.RenameColumns(#"Colunas Reordenadas",{{"Column1", "Data"}})
 in
-    #"Colunas Reordenadas"
+    #"Colunas Renomeadas"
